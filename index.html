@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Spin Master Leaderboard | Mighty Utan Sdn Bhd</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-light-top: #0b3b8f;
+      --bg-light-bottom: #001329;
+      --bg-dark-top: #050814;
+      --bg-dark-bottom: #000000;
+      --card-light: #ffffff;
+      --card-dark: #141722;
+      --text-light: #222222;
+      --text-dark: #f5f5f5;
+      --sm-blue: #005bbb;
+      --sm-lightblue: #00b7ff;
+      --sm-yellow: #ffe26d;
+      --accent-blue: #00b7ff;
+      --orb-blue: #0077ff;
+      --orb-cyan: #00d5ff;
+      --orb-purple: #6a5bff;
+      --orb-white: #f5fbff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 25px;
+      font-family: "Roboto", Arial, sans-serif;
+      color: var(--text-light);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      /* Spin Master blue “sky” gradient */
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255,255,255,0.18) 0, transparent 45%),
+        radial-gradient(circle at 90% 0%, rgba(255,255,255,0.15) 0, transparent 50%),
+        linear-gradient(180deg, var(--bg-light-top), var(--bg-light-bottom));
+    }
+
+    body.dark-mode {
+      color: var(--text-dark);
+      background:
+        radial-gradient(circle at 15% 0%, rgba(0,183,255,0.25) 0, transparent 40%),
+        radial-gradient(circle at 85% 10%, rgba(106,91,255,0.25) 0, transparent 45%),
+        linear-gradient(180deg, var(--bg-dark-top), var(--bg-dark-bottom));
+    }
+
+    /* Floating Spin Master orbs (background elements) */
+    .lego-block {
+      position: fixed;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      opacity: 0.25;
+      z-index: 0;
+      animation: floatOrb 26s linear infinite;
+      pointer-events: none;
+      background: radial-gradient(circle at 30% 25%, #ffffff 0, rgba(255,255,255,0.2) 25%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0.3) 100%);
+      box-shadow:
+        0 0 18px rgba(0, 0, 0, 0.18),
+        0 0 40px rgba(0, 183, 255, 0.35);
+    }
+
+    .lego-block::before,
+    .lego-block::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffffff 0, rgba(255,255,255,0.3) 30%, rgba(0,0,0,0.1) 100%);
+      opacity: 0.6;
+    }
+
+    /* inner mini-orbs to mimic “swirl” */
+    .lego-block::before {
+      width: 34px;
+      height: 34px;
+      top: 8px;
+      left: 10px;
+    }
+
+    .lego-block::after {
+      width: 26px;
+      height: 26px;
+      bottom: 10px;
+      right: 8px;
+    }
+
+    /* individual colors & positions */
+    .lego-block.b1  { left: 4%;  bottom: -140px; background-color: var(--orb-blue);   animation-duration: 24s; animation-delay: -3s; }
+    .lego-block.b2  { left: 18%; bottom: -180px; background-color: var(--orb-cyan);   animation-duration: 28s; animation-delay: -7s; }
+    .lego-block.b3  { left: 32%; bottom: -150px; background-color: var(--orb-purple); animation-duration: 30s; animation-delay: -11s; }
+    .lego-block.b4  { left: 46%; bottom: -210px; background-color: var(--orb-blue);   animation-duration: 26s; animation-delay: -15s; }
+    .lego-block.b5  { left: 60%; bottom: -190px; background-color: var(--orb-cyan);   animation-duration: 32s; animation-delay: -19s; }
+    .lego-block.b6  { left: 74%; bottom: -160px; background-color: var(--orb-white);  animation-duration: 27s; animation-delay: -23s; }
+    .lego-block.b7  { left: 86%; bottom: -220px; background-color: var(--orb-blue);   animation-duration: 33s; animation-delay: -27s; }
+    .lego-block.b8  { left: 12%; bottom: -230px; background-color: var(--orb-purple); animation-duration: 29s; animation-delay: -21s; }
+    .lego-block.b9  { left: 52%; bottom: -250px; background-color: var(--orb-cyan);   animation-duration: 31s; animation-delay: -25s; }
+    .lego-block.b10 { left: 92%; bottom: -200px; background-color: var(--orb-white);  animation-duration: 35s; animation-delay: -29s; }
+
+    @keyframes floatOrb {
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      30%  { transform: translate3d(20px, -35vh, 0) scale(1.08); }
+      60%  { transform: translate3d(-10px, -70vh, 0) scale(0.96); }
+      100% { transform: translate3d(8px, -110vh, 0) scale(1.02); }
+    }
+
+    .leaderboard-container {
+      position: relative;
+      z-index: 10;
+      width: 95%;
+      max-width: 980px;
+      background: var(--card-light);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.32);
+      transition: 0.3s ease;
+      border: 3px solid var(--sm-lightblue);
+    }
+
+    body.dark-mode .leaderboard-container {
+      background: var(--card-dark);
+      border-color: var(--sm-blue);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.75);
+    }
+
+    /* Header */
+    .sm-header {
+      background: radial-gradient(circle at 20% 0%, #00c3ff 0, #005bbb 40%, #003366 100%);
+      padding: 24px 20px 20px;
+      text-align: center;
+      color: #ffffff;
+      border-bottom: 5px solid var(--sm-lightblue);
+      position: relative;
+    }
+
+    .sm-title {
+      font-family: "Bungee", sans-serif;
+      font-size: 2rem;
+      margin: 0;
+      text-shadow: 0 3px 0 rgba(0,0,0,0.35);
+    }
+
+    .subtext {
+      font-size: 0.9rem;
+      margin-top: 4px;
+      opacity: 0.9;
+    }
+
+    /* Dark mode toggle */
+    .theme-toggle {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      transform: none;
+    }
+
+    .toggle-btn {
+      cursor: pointer;
+      border: none;
+      border-radius: 999px;
+      background: #ffffff;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+      color: #333;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    }
+
+    body.dark-mode .toggle-btn {
+      background: #2c2c2c;
+      color: #f5f5f5;
+    }
+
+    /* Content */
+    .banner { width: 100%; display: block; }
+
+    .leaderboard-content {
+      padding: 24px 20px 26px;
+      text-align: center;
+    }
+
+    .leaderboard-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .leaderboard-subtitle {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 18px;
+    }
+
+    body.dark-mode .leaderboard-subtitle { color: #ccc; }
+
+    .iframe-wrapper {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.12);
+    }
+
+    iframe {
+      width: 100%;
+      height: 1200px;
+      border: none;
+      background: #fff;
+    }
+
+    body.dark-mode iframe {
+      background: #0e0e0e;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 18px;
+      font-size: 0.85rem;
+      background: rgba(0,0,0,0.015);
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+
+    body.dark-mode .footer {
+      background: rgba(255,255,255,0.02);
+      border-top-color: rgba(255,255,255,0.12);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Floating Spin Master orbs -->
+  <div class="lego-block b1"></div>
+  <div class="lego-block b2"></div>
+  <div class="lego-block b3"></div>
+  <div class="lego-block b4"></div>
+  <div class="lego-block b5"></div>
+  <div class="lego-block b6"></div>
+  <div class="lego-block b7"></div>
+  <div class="lego-block b8"></div>
+  <div class="lego-block b9"></div>
+  <div class="lego-block b10"></div>
+
+  <div class="leaderboard-container">
+
+    <!-- Header -->
+    <header class="sm-header">
+      <h1 class="sm-title">Spin Master Leaderboard</h1>
+      <div class="subtext">Powered by Mighty Utan Sdn Bhd</div>
+
+      <div class="theme-toggle">
+        <button class="toggle-btn" id="themeToggle">
+          <span id="themeIcon">🌙</span> Dark Mode
+        </button>
+      </div>
+    </header>
+
+    <!-- Banners (replace if needed) -->
+    <a href="#"><img src="https://whbdistributors.com/brands/mightyutan/flight_oct2025/header_1.jpg" class="banner"></a>
+    <a href="#"><img src="https://whbdistributors.com/brands/mightyutan/flight_oct2025/header_2.jpg" class="banner"></a>
+
+    <main class="leaderboard-content">
+      <div class="leaderboard-title">🏆 Daily Updated Store Performance 🏆</div>
+      <div class="leaderboard-subtitle">Refresh this page to view the latest Spin Master performance ranking.</div>
+
+      <div class="iframe-wrapper">
+        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6M-gXGxpntHWiNunFBK80oRIvxiRq6O706esnYmrM0cgRZmFIwq8M2dYGGoxH5qh2NGwkzFm4y-gE/pubhtml?gid=1402449597&single=true&widget=true&headers=false"></iframe>
+      </div>
+    </main>
+
+    <footer class="footer">
+      © 2025 Mighty Utan Sdn Bhd. Spin Master® is a registered trademark of Spin Master Ltd.
+    </footer>
+
+  </div>
+
+  <script>
+    const body = document.body;
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+
+    const savedTheme = localStorage.getItem("sm-theme");
+    if (savedTheme === "dark") {
+      body.classList.add("dark-mode");
+      themeIcon.textContent = "☀️";
+    }
+
+    themeToggle.addEventListener("click", () => {
+      const isDark = body.classList.toggle("dark-mode");
+      themeIcon.textContent = isDark ? "☀️" : "🌙";
+      localStorage.setItem("sm-theme", isDark ? "dark" : "light");
+    });
+  </script>
+
+</body>
+</html>
